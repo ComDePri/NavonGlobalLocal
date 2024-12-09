@@ -1,4 +1,239 @@
 /* ************************************ */
+/* Define new helper functions for ComDepRi */
+/* ************************************ */
+
+var problemsJSON = {
+  "11": [
+    [2, 1, 3],
+    [0, 0],
+    [0]
+  ],
+  "12": [
+    [2, 1, 0],
+    [0, 0],
+    [3]
+  ],
+  "13": [
+    [2, 1, 0],
+    [3, 0],
+    [0]
+  ],
+  "14": [
+    [2, 0, 0],
+    [3, 1],
+    [0]
+  ],
+  "15": [
+    [2, 0, 0],
+    [3, 0],
+    [1]
+  ],
+  "16": [
+    [0, 0, 0],
+    [3, 2],
+    [1]
+  ],
+  "21": [
+    [2, 3, 1],
+    [0, 0],
+    [0]
+  ],
+  "22": [
+    [2, 3, 0],
+    [0, 0],
+    [1]
+  ],
+  "23": [
+    [2, 3, 0],
+    [1, 0],
+    [0]
+  ],
+  "24": [
+    [2, 0, 0],
+    [1, 3],
+    [0]
+  ],
+  "25": [
+    [2, 0, 0],
+    [1, 0],
+    [3]
+  ],
+  "26": [
+    [0, 0, 0],
+    [1, 2],
+    [3]
+  ],
+  "31": [
+    [3, 2, 1],
+    [0, 0],
+    [0]
+  ],
+  "32": [
+    [3, 2, 0],
+    [0, 0],
+    [1]
+  ],
+  "33": [
+    [3, 2, 0],
+    [1, 0],
+    [0]
+  ],
+  "34": [
+    [3, 0, 0],
+    [1, 2],
+    [0]
+  ],
+  "35": [
+    [3, 0, 0],
+    [1, 0],
+    [2]
+  ],
+  "36": [
+    [0, 0, 0],
+    [1, 3],
+    [2]
+  ],
+  "41": [
+    [3, 1, 2],
+    [0, 0],
+    [0]
+  ],
+  "42": [
+    [3, 1, 0],
+    [0, 0],
+    [2]
+  ],
+  "43": [
+    [3, 1, 0],
+    [2, 0],
+    [0]
+  ],
+  "44": [
+    [3, 0, 0],
+    [2, 1],
+    [0]
+  ],
+  "45": [
+    [3, 0, 0],
+    [2, 0],
+    [1]
+  ],
+  "46": [
+    [0, 0, 0],
+    [2, 3],
+    [1]
+  ],
+
+  "51": [
+    [1, 3, 2],
+    [0, 0],
+    [0]
+  ],
+  "52": [
+    [1, 3, 0],
+    [0, 0],
+    [2]
+  ],
+  "53": [
+    [2, 3, 0],
+    [1, 0],
+    [0]
+  ],
+  "54": [
+    [1, 0, 0],
+    [2, 3],
+    [0]
+  ],
+  "55": [
+    [1, 0, 0],
+    [2, 0],
+    [3]
+  ],
+  "56": [
+    [0, 0, 0],
+    [2, 1],
+    [3]
+  ],
+
+  "61": [
+    [1, 2, 3],
+    [0, 0],
+    [0]
+  ],
+  "62": [
+    [1, 2, 0],
+    [0, 0],
+    [3]
+  ],
+  "63": [
+    [2, 1, 0],
+    [3, 0],
+    [0]
+  ],
+  "64": [
+    [1, 0, 0],
+    [3, 2],
+    [0]
+  ],
+  "65": [
+    [1, 0, 0],
+    [3, 0],
+    [2]
+  ],
+  "66": [
+    [0, 0, 0],
+    [3, 1],
+    [2]
+  ]
+}
+
+const BUCKET_NAME = "tower-of-london-experiment-2024"
+function getProlificId(){
+  const urlParams = new URL(location.href).searchParams;
+// Get parameters by name
+  return urlParams.get('PROLIFIC_PID')
+}
+
+function getExpURL(){
+  const urlParams = new URL(location.href).searchParams;
+
+// Get parameters by name
+  //console.log("getting expUrl")
+  let expurl =  urlParams.get('expUrl');
+  let pid = urlParams.get('PROLIFIC_PID');
+  let stud = urlParams.get('studID');
+  let sess = urlParams.get('sessID');
+  return expurl +"/?PROLIFIC_PID="+ pid + "&studID=" + stud + "&sessID=" + sess;
+}
+
+function saveData() {
+  // Retrieve data from jsPsych
+
+  //let subject = getUrlDetails()
+  let subject = getProlificId();
+  var data = jsPsych.data.dataAsJSON();// Get data as JSON string
+
+  // Make a POST request to the Lambda function or API Gateway endpoint
+  $.ajax({
+    url: 'https://hss74dd1ed.execute-api.us-east-1.amazonaws.com/dev/',
+    type: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify({
+      "subject_id": `${subject}`,
+      "bucket": `${BUCKET_NAME}`,
+      "exp_data": JSON.stringify(data)
+    }),
+    success: function(response) {
+      console.log('Data uploaded successfully:', response);
+    },
+    error: function(xhr, status, error) {
+      console.error('Error uploading data:', error);
+    }
+  });
+}
+
+
+/* ************************************ */
 /* Define helper functions */
 /* ************************************ */
 function evalAttentionChecks() {
@@ -225,7 +460,13 @@ var end_block = {
   text: '<div class = centerbox><p class = center-block-text>Thanks for completing this task!</p><p class = center-block-text>Press <strong>enter</strong> to continue.</p></div>',
   cont_key: [13],
   timing_post_trial: 0,
-  on_finish: assessPerformance
+  on_finish: function() {
+    assessPerformance();
+    saveData();
+    console.log("data_saved")
+    window.location.href = getExpURL();
+    history.pushState(null, '', window.location.href);
+  }
 };
 
 var feedback_instruct_text =
