@@ -66,54 +66,46 @@ var randomDraw = function(lst) {
   return lst[index]
 }
 
-var makeTrialList = function(len, stim, data) {
+function correct_response(trial_index, stim_index) {
+  if( (trial_index === 'global' && stim_index === 0) ||
+      (trial_index === 'global' && stim_index === 1) ||
+      (trial_index === 'local' && stim_index === 0)  ||
+      (trial_index === 'local' && stim_index === 2)) {
+    return 83
+  } else {
+    return 72}
+}
+
+var makeTrialList = function(trial_index, len, stim, data) {
   //choice array: numeric key codes for the numbers 1-4
-  var choice_array = [83, 72]
-    // 1 is a switch trial: ensure half the trials are switch trials
-  var switch_trials = jsPsych.randomization.repeat([0, 1], len / 2)
+  console.log(stim)
+  var responses ={'global': [83, 82, 72, 72], 'local': [83,72, 82, 72]}
     //create test array
   output_list = []
     //randomize first trial
-  var trial_index = jsPsych.randomization.shuffle(['global', 'local'])[0]
-  if (trial_index == 'global') {
-    tmpi = Math.floor(Math.random() * (stim.length / 2))
-  } else {
-    tmpi = Math.floor(Math.random() * (stim.length / 2)) + stim.length / 2
-  }
+  tmpi = Math.floor(Math.random() * (stim.length))
   var tmp_obj = {}
   tmp_obj.stimulus = stim[tmpi]
   var tmp_data = $.extend({}, data[tmpi])
   tmp_data.switch = 0
-  tmp_data.correct_response = choice_array[local_shapes.indexOf(data[tmpi][trial_index + '_shape'])]
+  tmp_data.correct_response = responses[trial_index][tmpi]
   tmp_obj.data = tmp_data
   output_list.push(tmp_obj)
     /* randomly sample from either the global or local stimulus lists (first and half part of the stim/data arrays)
 	On stay trials randomly select an additional stimulus from that array. On switch trials choose from the other list. */
-  for (i = 1; i < switch_trials.length; i++) {
+  for (i = 1; i < len; i++) {
     tmp_obj = {}
-    if (switch_trials[i] == 1) {
-      if (trial_index == 'global') {
-        trial_index = 'local'
-      } else {
-        trial_index = 'global'
-      }
-    }
-    if (trial_index == 'global') {
-      tmpi = Math.floor(Math.random() * (stim.length / 2))
-    } else {
-      tmpi = Math.floor(Math.random() * (stim.length / 2)) + stim.length / 2
-    }
+    tmpi = Math.floor(Math.random() * (stim.length))
     tmp_obj.stimulus = stim[tmpi]
     tmp_data = $.extend({}, data[tmpi])
-    tmp_data.switch = switch_trials[i]
-    tmp_data.correct_response = choice_array[local_shapes.indexOf(data[tmpi][trial_index +
-      '_shape'
-    ])]
+    tmp_data.correct_response = correct_response(trial_index, tmpi)
     tmp_obj.data = tmp_data
     output_list.push(tmp_obj)
+    console.log(trial_index + ", tmpi:" + tmpi + ", stim:" + tmp_obj.stimulus+ ", currect:" + tmp_data.correct_response)
   }
   return output_list
 }
+
 
 var getInstructFeedback = function() {
     return '<div class = centerbox><p class = center-block-text>' + feedback_instruct_text +
@@ -134,9 +126,9 @@ var credit_var = true
 // task specific variables
 var current_trial = 0
 var choices = [72, 83]
-var task_colors = jsPsych.randomization.shuffle(['blue', 'black'])
-var global_shapes = ['s','h', 'o']
-var local_shapes = ['s','h','o']
+var task_colors = jsPsych.randomization.shuffle(['black'])
+var global_shapes = ['s','h']
+var local_shapes = ['s','h']
 var path = 'images/'
 var prefix = '<div class = centerbox><img src = "'
 var postfix = '"</img></div>'
@@ -147,10 +139,10 @@ for (c = 0; c < task_colors.length; c++) {
   if (c === 0) {
     condition = 'global'
     global_shape_length = 2
-    local_shape_length = 3
+    local_shape_length = 2
   } else {
     condition = 'local'
-    global_shape_length = 3
+    global_shape_length = 2
     local_shape_length = 2
   }
   for (g = 0; g < global_shape_length; g++) {
@@ -164,18 +156,29 @@ for (c = 0; c < task_colors.length; c++) {
         global_shape: global_shapes[g],
         local_shape: local_shapes[l]
       })
+      console.log('data: ' + data)
+
     }
   }
 }
 
+console.log('sitm_list' + stim)
+console.log('data: ' + data)
+
 jsPsych.pluginAPI.preloadImages(images)
 //Set up experiment stimulus order
-var practice_trials = makeTrialList(36, stim, data)  //36
-for (i = 0; i < practice_trials.length; i++) {
-  practice_trials[i].key_answer = practice_trials[i].data.correct_response
+var global_practice_trials = makeTrialList('global',16, stim, data)  //36
+for (i = 0; i < global_practice_trials.length; i++) {
+  global_practice_trials[i].key_answer = global_practice_trials[i].data.correct_response
 }
-var test_trials = makeTrialList(96, stim, data) //96
 
+var local_practice_trials = makeTrialList('local',16, stim, data)  //36
+for (i = 0; i < local_practice_trials.length; i++) {
+  local_practice_trials[i].key_answer = local_practice_trials[i].data.correct_response
+}
+
+var global_test_trials = makeTrialList('global',72, stim, data) //96
+var local_test_trials = makeTrialList('local',72, stim, data) //96
 
 
 /* ************************************ */
@@ -244,17 +247,17 @@ var instructions_block = {
     trial_id: "instruction"
   },
   pages: [
-    '<div class = centerbox><p class = block-text>In this experiment you will see blue or black letters made up of smaller letters, like the image below. All of the smaller letters will always be the same letter.</p><div class = instructionImgBox><img src = "images/blue_s_of_h.png" height = 200 width = 200></img></div></div>',
+    '<div class = centerbox><p class = block-text>In this experiment you will see blue or black letters made up of smaller letters, like the image below. All of the smaller letters will always be the same letter.</p><div class = instructionImgBox><img src = "images/black_s_of_h.png" height = 200 width = 200></img></div></div>',
     '<div class = centerbox><p class = block-text>Your task is to indicate whether the larger or smaller letters is an "H" or "S", depending on the color. If the letter is ' +
     task_colors[0] + ' indicate whether the larger letter is an "H" or "S". If the letter is ' +
     task_colors[1] +
     ' indicate whether the smaller letter is an "H" or "S".</p><p class = block-text>Use the "H" or "S" keys to indicate the letter.</p></div>',
     '<div class = centerbox><p class = block-text>For instance, for the letter below you would press "S" because it is ' +
-    task_colors[1] +
+    task_colors[0] +
     ' which means you should respond based on the smaller shapes. If the shape was instead ' +
     task_colors[0] +
     ' you would press "H".</p><div class = instructionImgBox><img src = "images/' +
-    task_colors[1] + '_h_of_s.png" height = 200 width = 200></img></div></div>'
+    task_colors[0] + '_h_of_s.png" height = 200 width = 200></img></div></div>'
   ],
   allow_keys: false,
   show_clickable_nav: true,
@@ -284,27 +287,36 @@ var instruction_node = {
   }
 }
 
-var start_practice_block = {
+var start_global_practice_block = {
   type: 'poldrack-text',
   timing_response: 180000,
   data: {
     trial_id: "practice_intro"
   },
-  text: '<div class = centerbox><p class = center-block-text>We will start with some practice. During practice you will get feedback about whether you responded correctly. You will not get feedback during the rest of the experiment.</p><p class = center-block-text>Press <strong>enter</strong> to begin.</p></div>',
+  text: '<div class = centerbox><p class = center-block-text>We will start with some practice. Choose the Global letter During practice you will get feedback about whether you responded correctly. You will not get feedback during the rest of the experiment.</p><p class = center-block-text>Press <strong>enter</strong> to begin.</p></div>',
   cont_key: [13],
   timing_post_trial: 1000
 };
 
-var start_test_block = {
+var start_local_practice_block = {
+  type: 'poldrack-text',
+  timing_response: 180000,
+  data: {
+    trial_id: "practice_intro"
+  },
+  text: '<div class = centerbox><p class = center-block-text>We will start with some practice. Choose the Local Letter. During practice you will get feedback about whether you responded correctly. You will not get feedback during the rest of the experiment.</p><p class = center-block-text>Press <strong>enter</strong> to begin.</p></div>',
+  cont_key: [13],
+  timing_post_trial: 1000
+};
+
+var start_local_test_block = {
   type: 'poldrack-text',
   timing_response: 180000,
   data: {
     trial_id: "test_intro"
   },
-  text: '<div class = centerbox><p class = center-block-text>We will now start the test. Remember, if the letter is ' +
-    task_colors[0] + ' indicate whether the larger letter is an "H" or "S". If the letter is ' +
-    task_colors[1] +
-    ' indicate whether the smaller letter is an "H" or "S".</p><p class = center-block-text>Press <strong>enter</strong> to begin.</p></div>',
+  text: '<div class = centerbox><p class = center-block-text>We will now start the test. Local Block description'
+      + '</p><p class = center-block-text>Press <strong>enter</strong> to begin.</p></div>',
   cont_key: [13],
   timing_post_trial: 1000,
   on_finish: function() {
@@ -312,35 +324,54 @@ var start_test_block = {
   }
 };
 
-/* define practice block */
-var practice_block = {
-  type: 'poldrack-categorize',
-  timeline: practice_trials,
-  is_html: true,
+var start_global_test_block = {
+  type: 'poldrack-text',
+  timing_response: 180000,
   data: {
-    trial_id: "stim",
-    exp_stage: "practice"
+    trial_id: "test_intro"
   },
-  correct_text: '<div class = centerbox><div style="color:green"; class = center-text>Correct!</div></div>',
-  incorrect_text: '<div class = centerbox><div style="color:red"; class = center-text>Incorrect</div></div>',
-  timeout_message: '<div class = centerbox><div class = center-text>Respond faster!</div></div>',
-  choices: choices,
-  timing_feedback_duration: 1000,
-  show_stim_with_feedback: false,
-  timing_response: 2000,
-  timing_post_trial: 500,
-  on_finish: function(data) {
-  	jsPsych.data.addDataToLastTrial({
-  		trial_num: current_trial
-  	})
-  	current_trial += 1
+  text: '<div class = centerbox><p class = center-block-text>We will now start the test. Global Block description'
+      + '</p><p class = center-block-text>Press <strong>enter</strong> to begin.</p></div>',
+  cont_key: [13],
+  timing_post_trial: 1000,
+  on_finish: function() {
+    current_trial = 0
   }
+};
+var practice_trials = global_practice_trials;
+/* define practice block */
+function getPracticeBlock(trials){
+
+  var practice_block = {
+    type: 'poldrack-categorize',
+    timeline: trials,
+    is_html: true,
+    data: {
+      trial_id: "stim",
+      exp_stage: "practice"
+    },
+    correct_text: '<div class = centerbox><div style="color:green"; class = center-text>Correct!</div></div>',
+    incorrect_text: '<div class = centerbox><div style="color:red"; class = center-text>Incorrect</div></div>',
+    timeout_message: '<div class = centerbox><div class = center-text>Respond faster!</div></div>',
+    choices: choices,
+    timing_feedback_duration: 1000,
+    show_stim_with_feedback: false,
+    timing_response: 2000,
+    timing_post_trial: 500,
+    on_finish: function (data) {
+      jsPsych.data.addDataToLastTrial({
+        trial_num: current_trial
+      })
+      current_trial += 1
+    }
+ }
+  return practice_block;
 }
 
 /* define test block */
-var test_block = {
+var global_test_block = {
   type: 'poldrack-single-stim',
-  timeline: test_trials,
+  timeline: global_test_trials,
   data: {
     trial_id: "stim",
     exp_stage: "test"
@@ -362,13 +393,48 @@ var test_block = {
   }
 };
 
+/* define test block */
+var local_test_block = {
+  type: 'poldrack-single-stim',
+  timeline: local_test_trials,
+  data: {
+    trial_id: "stim",
+    exp_stage: "test"
+  },
+  is_html: true,
+  choices: choices,
+  timing_post_trial: 500,
+  timing_response: 2000,
+  on_finish: function(data) {
+    correct = false
+    if (data.key_press === data.correct_response) {
+      correct = true
+    }
+    jsPsych.data.addDataToLastTrial({
+      correct: correct,
+      trial_num: current_trial
+    })
+    current_trial += 1
+  }
+};
+
+const random_order = Math.random() < 0.5 ? 0 : 1;
+
 /* create experiment definition array */
 var local_global_letter_experiment = [];
 local_global_letter_experiment.push(instruction_node);
-local_global_letter_experiment.push(start_practice_block);
-local_global_letter_experiment.push(practice_block);
-local_global_letter_experiment.push(start_test_block);
-local_global_letter_experiment.push(test_block);
+local_global_letter_experiment.push(start_local_practice_block);
+local_global_letter_experiment.push(getPracticeBlock(local_practice_trials));
+local_global_letter_experiment.push(start_global_practice_block);
+local_global_letter_experiment.push(getPracticeBlock(global_practice_trials));
+
+const globalFirstSequence = [start_global_test_block, global_test_block,
+                             start_local_test_block, local_test_block,];
+
+const localFirstSequence = [start_local_test_block, local_test_block,
+                              start_global_test_block, global_test_block,];
+
+local_global_letter_experiment.push(...(random_order === 0 ? globalFirstSequence : localFirstSequence));
 local_global_letter_experiment.push(attention_node)
 local_global_letter_experiment.push(post_task_block)
 local_global_letter_experiment.push(end_block);
