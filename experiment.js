@@ -412,8 +412,15 @@ for (i = 0; i < local_practice_trials.length; i++) {
   local_practice_trials[i].key_answer = local_practice_trials[i].data.correct_response
 }
 
-var global_test_trials = makeTrialList('global',72, stim, data) //96
-var local_test_trials = makeTrialList('local',72, stim, data) //96
+var num_trials
+if(getProlificId() === "test"){
+  num_trials = 0;
+} else {
+  num_trials = 72
+}
+
+var global_test_trials = makeTrialList('global',num_trials, stim, data) //96
+var local_test_trials = makeTrialList('local',num_trials, stim, data) //96
 
 
 /* ************************************ */
