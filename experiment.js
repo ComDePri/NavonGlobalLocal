@@ -283,7 +283,7 @@ function assessPerformance() {
 	var avg_rt = -1
 	if (rt_array.length !== 0) {
 		avg_rt = math.median(rt_array)
-	} 
+	}
 	//calculate whether response distribution is okay
 	var responses_ok = true
 	Object.keys(choice_counts).forEach(function(key, index) {
@@ -313,30 +313,28 @@ function correct_response(trial_index, stim_index) {
 
 var makeTrialList = function(trial_index, len, stim, data) {
   //choice array: numeric key codes for the numbers 1-4
-  console.log(stim)
   var responses ={'global': [83, 82, 72, 72], 'local': [83,72, 82, 72]}
     //create test array
   output_list = []
     //randomize first trial
   tmpi = Math.floor(Math.random() * (stim.length))
   var tmp_obj = {}
-  tmp_obj.stimulus = stim[tmpi]
+  tmp_obj.stimulus = stim[tmpi] + '" height = 200 width = 200 style=' + getRandomImagePositioning() +'></img></div></div>'
   var tmp_data = $.extend({}, data[tmpi])
   tmp_data.switch = 0
   tmp_data.correct_response = responses[trial_index][tmpi]
   tmp_obj.data = tmp_data
   output_list.push(tmp_obj)
-    /* randomly sample from either the global or local stimulus lists (first and half part of the stim/data arrays)
-	On stay trials randomly select an additional stimulus from that array. On switch trials choose from the other list. */
+  /* randomly sample from either the global or local stimulus lists (first and half part of the stim/data arrays)
+  On stay trials randomly select an additional stimulus from that array. On switch trials choose from the other list. */
   for (i = 1; i < len; i++) {
     tmp_obj = {}
     tmpi = Math.floor(Math.random() * (stim.length))
-    tmp_obj.stimulus = stim[tmpi]
+    tmp_obj.stimulus = stim[tmpi] + '" height = 200 width = 200 style=' + getRandomImagePositioning() +'></img></div></div>'
     tmp_data = $.extend({}, data[tmpi])
     tmp_data.correct_response = correct_response(trial_index, tmpi)
     tmp_obj.data = tmp_data
     output_list.push(tmp_obj)
-    console.log(trial_index + ", tmpi:" + tmpi + ", stim:" + tmp_obj.stimulus+ ", currect:" + tmp_data.correct_response)
   }
   return output_list
 }
@@ -346,7 +344,18 @@ var getInstructFeedback = function() {
     return '<div class = centerbox><p class = center-block-text>' + feedback_instruct_text +
       '</p></div>'
   }
-  
+
+function getRandomImagePositioning() {
+  const positionOptions = [
+    '"margin-left: 12mm;"',
+    '"margin-right: 12mm;"',
+    '"margin-top: -20mm;"',
+    '"margin-top: 40mm;"',
+  ];
+
+  return positionOptions[Math.floor(Math.random() * positionOptions.length)];
+}
+
 
   /* ************************************ */
   /* Define experimental variables */
@@ -366,7 +375,6 @@ var global_shapes = ['s','h']
 var local_shapes = ['s','h']
 var path = 'images/'
 var prefix = '<div class = centerbox><img src = "'
-var postfix = '"</img></div>'
 var stim = []
 var data = []
 var images = []
@@ -383,7 +391,7 @@ for (c = 0; c < task_colors.length; c++) {
   for (g = 0; g < global_shape_length; g++) {
     for (l = 0; l < local_shape_length; l++) {
       stim.push(prefix + path + task_colors[c] + '_' + global_shapes[g] + '_of_' + local_shapes[l] +
-        '.png' + postfix)
+        '.png')
       images.push(path + task_colors[c] + '_' + global_shapes[g] + '_of_' + local_shapes[l] +
         '.png')
       data.push({
@@ -391,23 +399,20 @@ for (c = 0; c < task_colors.length; c++) {
         global_shape: global_shapes[g],
         local_shape: local_shapes[l]
       })
-      console.log('data: ' + data)
 
     }
   }
 }
 
-console.log('sitm_list' + stim)
-console.log('data: ' + data)
 
 jsPsych.pluginAPI.preloadImages(images)
 //Set up experiment stimulus order
-var global_practice_trials = makeTrialList('global',16, stim, data)  //36
+var global_practice_trials = makeTrialList('global',4, stim, data)  //36
 for (i = 0; i < global_practice_trials.length; i++) {
   global_practice_trials[i].key_answer = global_practice_trials[i].data.correct_response
 }
 
-var local_practice_trials = makeTrialList('local',16, stim, data)  //36
+var local_practice_trials = makeTrialList('local',4, stim, data)  //36
 for (i = 0; i < local_practice_trials.length; i++) {
   local_practice_trials[i].key_answer = local_practice_trials[i].data.correct_response
 }
@@ -421,6 +426,7 @@ if(getProlificId() === "test"){
 
 var global_test_trials = makeTrialList('global',num_trials, stim, data) //96
 var local_test_trials = makeTrialList('local',num_trials, stim, data) //96
+
 
 
 /* ************************************ */
@@ -590,7 +596,7 @@ var practice_trials = global_practice_trials;
 /* define practice block */
 function getPracticeBlock(trials){
 
-  var practice_block = {
+  return {
     type: 'poldrack-categorize',
     timeline: trials,
     is_html: true,
@@ -612,8 +618,7 @@ function getPracticeBlock(trials){
       })
       current_trial += 1
     }
- }
-  return practice_block;
+  };
 }
 
 /* define test block */
@@ -671,16 +676,12 @@ const random_order = Math.random() < 0.5 ? 0 : 1;
 /* create experiment definition array */
 var local_global_letter_experiment = [];
 local_global_letter_experiment.push(instruction_node);
-local_global_letter_experiment.push(start_local_practice_block);
-local_global_letter_experiment.push(getPracticeBlock(local_practice_trials));
-local_global_letter_experiment.push(start_global_practice_block);
-local_global_letter_experiment.push(getPracticeBlock(global_practice_trials));
 
-const globalFirstSequence = [start_global_test_block, global_test_block,
-                             start_local_test_block, local_test_block,];
+const globalFirstSequence = [start_global_practice_block,getPracticeBlock(global_practice_trials), start_global_test_block, global_test_block,
+  start_local_practice_block, getPracticeBlock(local_practice_trials) ,start_local_test_block, local_test_block,];
 
-const localFirstSequence = [start_local_test_block, local_test_block,
-                              start_global_test_block, global_test_block,];
+const localFirstSequence = [start_local_practice_block, getPracticeBlock(local_practice_trials),start_local_test_block, local_test_block,
+  start_global_practice_block, getPracticeBlock(global_practice_trials), start_global_test_block, global_test_block,];
 
 local_global_letter_experiment.push(...(random_order === 0 ? globalFirstSequence : localFirstSequence));
 local_global_letter_experiment.push(attention_node)
