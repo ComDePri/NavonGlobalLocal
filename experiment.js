@@ -522,7 +522,7 @@ var end_block = {
     exp_id: 'local_global_letter'
   },
   timing_response: 180000,
-  text: '<div class = centerbox><p class = center-block-text>Thanks for completing this task!</p><p class = center-block-text>Press <strong>enter</strong> to continue.</p></div>',
+  text: '<div class = centerbox><p class = center-block-text>The task is over</p><p class = center-block-text>Press <strong>enter</strong> to continue.</p></div>',
   cont_key: [13],
   timing_post_trial: 0,
   on_finish: function() {
@@ -728,5 +728,4 @@ const localFirstSequence = [start_local_practice_block, getPracticeBlock(local_p
 
 local_global_letter_experiment.push(...(random_order === 0 ? globalFirstSequence : localFirstSequence));
 local_global_letter_experiment.push(attention_node)
-local_global_letter_experiment.push(post_task_block)
 local_global_letter_experiment.push(end_block);
