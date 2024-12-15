@@ -553,17 +553,8 @@ var instructions_block = {
     trial_id: "instruction"
   },
   pages: [
-    '<div class = centerbox><p class = block-text>In this experiment you will see blue or black letters made up of smaller letters, like the image below. All of the smaller letters will always be the same letter.</p><div class = instructionImgBox><img src = "images/black_s_of_h.png" height = 200 width = 200></img></div></div>',
-    '<div class = centerbox><p class = block-text>Your task is to indicate whether the larger or smaller letters is an "H" or "S", depending on the color. If the letter is ' +
-    task_colors[0] + ' indicate whether the larger letter is an "H" or "S". If the letter is ' +
-    task_colors[1] +
-    ' indicate whether the smaller letter is an "H" or "S".</p><p class = block-text>Use the "H" or "S" keys to indicate the letter.</p></div>',
-    '<div class = centerbox><p class = block-text>For instance, for the letter below you would press "S" because it is ' +
-    task_colors[0] +
-    ' which means you should respond based on the smaller shapes. If the shape was instead ' +
-    task_colors[0] +
-    ' you would press "H".</p><div class = instructionImgBox><img src = "images/' +
-    task_colors[0] + '_h_of_s.png" height = 200 width = 200></img></div></div>'
+    '<div class = centerbox><p class = block-text> In this experiment you will see big letters made up of smaller letters, like the image below. All of the smaller letters will always be the same letter.</p><div class = instructionImgBox><img src = "images/black_s_of_h.png" height = 200 width = 200></img></div></div>',
+    '<div class = centerbox><p class = block-text>Your task is to indicate whether the larger or smaller letters is an "H" or "S", depending on the block you will play. In the global block your task is to indicate whether the larger letter is an "H" or "S". In the local block your task is to indicate whether the smaller letter is an "H" or "S". Use the "H" or "S" keys to choose your answer.</p></div>',
   ],
   allow_keys: false,
   show_clickable_nav: true,
@@ -599,7 +590,7 @@ var start_global_practice_block = {
   data: {
     trial_id: "practice_intro"
   },
-  text: '<div class = centerbox><p class = center-block-text>We will start with some practice. Choose the Global letter During practice you will get feedback about whether you responded correctly. You will not get feedback during the rest of the experiment.</p><p class = center-block-text>Press <strong>enter</strong> to begin.</p></div>',
+  text: '<div class = centerbox><p class = center-block-text>This is the global block, so answer according to the big letter. We will start with some practice. During practice you will get feedback about whether you responded correctly. You will not get feedback during the rest of the experiment. Press <strong>enter</strong> to begin.</p></div>',
   cont_key: [13],
   timing_post_trial: 1000
 };
@@ -610,7 +601,7 @@ var start_local_practice_block = {
   data: {
     trial_id: "practice_intro"
   },
-  text: '<div class = centerbox><p class = center-block-text>We will start with some practice. Choose the Local Letter. During practice you will get feedback about whether you responded correctly. You will not get feedback during the rest of the experiment.</p><p class = center-block-text>Press <strong>enter</strong> to begin.</p></div>',
+  text: '<div class = centerbox><p class = center-block-text>This is the local block, so answer according to the small letters. We will start with some practice. During practice you will get feedback about whether you responded correctly. You will not get feedback during the rest of the experiment. Press <strong>enter</strong> to begin.</div>',
   cont_key: [13],
   timing_post_trial: 1000
 };
@@ -621,7 +612,7 @@ var start_local_test_block = {
   data: {
     trial_id: "test_intro"
   },
-  text: '<div class = centerbox><p class = center-block-text>We will now start the test. Local Block description'
+  text: '<div class = centerbox><p class = center-block-text> We will now start the test. Remember, answer according to the small letters.'
       + '</p><p class = center-block-text>Press <strong>enter</strong> to begin.</p></div>',
   cont_key: [13],
   timing_post_trial: 1000,
@@ -636,7 +627,7 @@ var start_global_test_block = {
   data: {
     trial_id: "test_intro"
   },
-  text: '<div class = centerbox><p class = center-block-text>We will now start the test. Global Block description'
+  text: '<div class = centerbox><p class = center-block-text>W We will now start the test. Remember, answer according to the big letters.'
       + '</p><p class = center-block-text>Press <strong>enter</strong> to begin.</p></div>',
   cont_key: [13],
   timing_post_trial: 1000,
