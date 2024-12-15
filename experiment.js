@@ -319,7 +319,7 @@ var makeTrialList = function(trial_index, len, stim, data) {
     //randomize first trial
   tmpi = Math.floor(Math.random() * (stim.length))
   var tmp_obj = {}
-  tmp_obj.stimulus = stim[tmpi] + '" height = 200 width = 200 style=' + getRandomImagePositioning() +'></img></div></div>'
+  tmp_obj.stimulus = stim[tmpi] + generateImageDescription() +'></img></div></div>'
   var tmp_data = $.extend({}, data[tmpi])
   tmp_data.switch = 0
   tmp_data.correct_response = responses[trial_index][tmpi]
@@ -330,7 +330,7 @@ var makeTrialList = function(trial_index, len, stim, data) {
   for (i = 1; i < len; i++) {
     tmp_obj = {}
     tmpi = Math.floor(Math.random() * (stim.length))
-    tmp_obj.stimulus = stim[tmpi] + '" height = 200 width = 200 style=' + getRandomImagePositioning() +'></img></div></div>'
+    tmp_obj.stimulus = stim[tmpi] + generateImageDescription() +'></img></div></div>'
     tmp_data = $.extend({}, data[tmpi])
     tmp_data.correct_response = correct_response(trial_index, tmpi)
     tmp_obj.data = tmp_data
@@ -345,17 +345,69 @@ var getInstructFeedback = function() {
       '</p></div>'
   }
 
-function getRandomImagePositioning() {
-  const positionOptions = [
-    '"margin-left: 12mm;"',
-    '"margin-right: 12mm;"',
-    '"margin-top: -20mm;"',
-    '"margin-top: 40mm;"',
-  ];
-
-  return positionOptions[Math.floor(Math.random() * positionOptions.length)];
+// Function to calculate screen DPI dynamically
+function getScreenDPI() {
+  const div = document.createElement('div');
+  div.style.width = '1in';
+  div.style.height = '1in';
+  div.style.position = 'absolute';
+  div.style.visibility = 'hidden';
+  document.body.appendChild(div);
+  const dpi = div.offsetWidth;
+  document.body.removeChild(div);
+  return dpi;
 }
 
+// Function to convert millimeters to pixels based on the screen DPI
+function mmToPixels(mm) {
+  const dpi = getScreenDPI();
+  const mmPerInch = 25.4;
+  return (mm / mmPerInch) * dpi;
+}
+
+// Function to generate a random CSS offset 12mm away from the center of the viewport
+function getRandomImagePositioning() {
+  const offsetPixels = 50; // Convert 12mm to pixels
+
+  // Get the center position of the viewport
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+
+  const centerX = 0;
+  const centerY = 0;
+
+  // Define the image dimensions
+  const imageWidth = 200;
+  const imageHeight = 200;
+
+  // Randomly decide the direction to offset
+  const directions = [
+    { x: offsetPixels, y: 0 },   // Right of center
+    { x: -offsetPixels, y: 0 },  // Left of center
+    { x: 0, y: offsetPixels },   // Below center
+    { x: 0, y: -offsetPixels }   // Above center
+  ];
+  const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+
+  // Calculate the top-left position of the image to ensure the image's center is at the desired point
+  const positionX =randomDirection.x;
+  const positionY = randomDirection.y;
+
+
+  // Return the CSS styles for positioning
+  return `position: absolute; left: ${positionX}px; top: ${positionY}px;`;
+}
+
+// Function to generate the image description with random positioning
+function generateImageDescription() {
+  const height = 200;
+  const width = 200;
+  const style = getRandomImagePositioning();
+
+
+
+  return `"height=${height} width=${width} style='${style}'"`;
+}
 
   /* ************************************ */
   /* Define experimental variables */
