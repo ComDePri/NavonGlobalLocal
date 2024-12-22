@@ -242,7 +242,7 @@ function startMyTimer() {
         timeline: local_global_letter_experiment
       });
     }
-    }, 5000);
+    }, 90000);
   };
 
   document.addEventListener('keydown', resetTimer);
