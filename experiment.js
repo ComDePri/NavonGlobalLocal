@@ -226,14 +226,14 @@ function generateImageDescription() {
 
 function startMyTimer() {
   let timer;
-  stop_timer = false;
+  kick_on_timeout = true;
   const resetTimer = () => {
     if (timer) {
       clearTimeout(timer);
     }
     timer = setTimeout(function() {
 
-    if(!stop_timer){
+    if(kick_on_timeout){
       console.log('90 seconds have passed');
       saveData();
       jsPsych.endCurrentTimeline();
@@ -242,7 +242,7 @@ function startMyTimer() {
         timeline: local_global_letter_experiment
       });
     }
-    }, 90000);
+    }, 5000);
   };
 
   document.addEventListener('keydown', resetTimer);
@@ -261,7 +261,7 @@ var instructTimeThresh = 0 ///in seconds
 var credit_var = true
 
 // task specific variables
-var stop_timer = false
+var kick_on_timeout = false
 var current_trial = 0
 var choices = [72, 83]
 var task_colors = jsPsych.randomization.shuffle(['black'])
@@ -405,7 +405,7 @@ var feedback_instruct_block = {
   },
   text: getInstructFeedback,
   timing_post_trial: 0,
-  timing_response: 180000
+  timing_response: 180000,
 };
 /// This ensures that the subject does not read through the instructions too quickly.  If they do it too quickly, then we will go over the loop again.
 var instructions_block = {
@@ -479,6 +479,7 @@ var start_local_test_block = {
   timing_post_trial: 1000,
   on_finish: function() {
   	current_trial = 0
+    kick_on_timeout = true;
   }
 };
 
@@ -494,6 +495,7 @@ var start_global_test_block = {
   timing_post_trial: 1000,
   on_finish: function() {
     current_trial = 0
+    kick_on_timeout = true;
   }
 };
 var practice_trials = global_practice_trials;
@@ -550,7 +552,7 @@ var global_test_block = {
     current_trial += 1;
 
     if(current_trial === num_trials) {
-      stop_timer = true;
+      kick_on_timeout = false;
     }
   }
 };
@@ -580,7 +582,7 @@ var local_test_block = {
     current_trial += 1
 
     if(current_trial === num_trials) {
-      stop_timer = true;
+      kick_on_timeout = false;
     }
     
   }
@@ -601,3 +603,4 @@ const localFirstSequence = [start_local_practice_block, getPracticeBlock(local_p
 local_global_letter_experiment.push(...(random_order === 0 ? globalFirstSequence : localFirstSequence));
 local_global_letter_experiment.push(attention_node)
 local_global_letter_experiment.push(end_block);
+kick_on_timeout = false;
