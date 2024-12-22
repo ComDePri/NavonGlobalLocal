@@ -224,6 +224,32 @@ function generateImageDescription() {
   return `"height=${height} width=${width} style='${style}'"`;
 }
 
+function startMyTimer() {
+  let timer;
+  stop_timer = false;
+  const resetTimer = () => {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(function() {
+
+    if(!stop_timer){
+      console.log('90 seconds have passed');
+      saveData();
+      jsPsych.endCurrentTimeline();
+      local_global_letter_experiment = [error_block];
+      jsPsych.init({
+        timeline: local_global_letter_experiment
+      });
+    }
+    }, 90000);
+  };
+
+  document.addEventListener('keydown', resetTimer);
+  resetTimer(); // Start the timer initially
+}
+
+
   /* ************************************ */
   /* Define experimental variables */
   /* ************************************ */
@@ -235,6 +261,7 @@ var instructTimeThresh = 0 ///in seconds
 var credit_var = true
 
 // task specific variables
+var stop_timer = false
 var current_trial = 0
 var choices = [72, 83]
 var task_colors = jsPsych.randomization.shuffle(['black'])
@@ -288,7 +315,7 @@ var num_trials
 if(getProlificId() === "test"){
   num_trials = 0;
 } else {
-  num_trials = 72
+  num_trials = 72;
 }
 
 var global_test_trials = makeTrialList('global',num_trials, stim, data) //96
@@ -510,26 +537,7 @@ var global_test_block = {
   choices: choices,
   timing_post_trial: 500,
   timing_response: 2000,
-  on_load: function() {
-    let timer;
-    const resetTimer = () => {
-      if (timer) {
-        clearTimeout(timer);
-      }
-      timer = setTimeout(function() {
-        console.log('90 seconds have passed');
-        saveData();
-        jsPsych.endCurrentTimeline();
-        local_global_letter_experiment = [error_block];
-        jsPsych.init({
-          timeline: local_global_letter_experiment
-        });
-      }, 90000);
-    };
-
-    document.addEventListener('keydown', resetTimer);
-    resetTimer(); // Start the timer initially
-  },
+  on_load: startMyTimer(),
   on_finish: function(data) {
     correct = false;
     if (data.key_press === data.correct_response) {
@@ -540,6 +548,10 @@ var global_test_block = {
       trial_num: current_trial
     });
     current_trial += 1;
+
+    if(current_trial === num_trials) {
+      stop_timer = true;
+    }
   }
 };
 
@@ -555,26 +567,7 @@ var local_test_block = {
   choices: choices,
   timing_post_trial: 500,
   timing_response: 2000,
-  on_load: function() {
-    let timer;
-    const resetTimer = () => {
-      if (timer) {
-        clearTimeout(timer);
-      }
-      timer = setTimeout(function() {
-        console.log('90 seconds have passed');
-        saveData();
-        jsPsych.endCurrentTimeline();
-        local_global_letter_experiment = [error_block];
-        jsPsych.init({
-          timeline: local_global_letter_experiment
-        });
-      }, 90000);
-    };
-
-    document.addEventListener('keydown', resetTimer);
-    resetTimer(); // Start the timer initially
-  },
+  on_load: startMyTimer(),
   on_finish: function(data) {
     correct = false
     if (data.key_press === data.correct_response) {
@@ -585,6 +578,11 @@ var local_test_block = {
       trial_num: current_trial
     })
     current_trial += 1
+
+    if(current_trial === num_trials) {
+      stop_timer = true;
+    }
+    
   }
 };
 
