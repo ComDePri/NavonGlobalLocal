@@ -461,7 +461,7 @@ var start_global_test_block = {
   data: {
     trial_id: "test_intro"
   },
-  text: '<div class = centerbox><p class = center-block-text>W We will now start the test. Remember, answer according to the big letters.'
+  text: '<div class = centerbox><p class = center-block-text>We will now start the test. Remember, answer according to the big letters.'
       + '</p><p class = center-block-text>Press <strong>enter</strong> to begin.</p></div>',
   cont_key: [13],
   timing_post_trial: 1000,
