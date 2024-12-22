@@ -2,191 +2,6 @@
 /* Define new helper functions for ComDepRi */
 /* ************************************ */
 
-var problemsJSON = {
-  "11": [
-    [2, 1, 3],
-    [0, 0],
-    [0]
-  ],
-  "12": [
-    [2, 1, 0],
-    [0, 0],
-    [3]
-  ],
-  "13": [
-    [2, 1, 0],
-    [3, 0],
-    [0]
-  ],
-  "14": [
-    [2, 0, 0],
-    [3, 1],
-    [0]
-  ],
-  "15": [
-    [2, 0, 0],
-    [3, 0],
-    [1]
-  ],
-  "16": [
-    [0, 0, 0],
-    [3, 2],
-    [1]
-  ],
-  "21": [
-    [2, 3, 1],
-    [0, 0],
-    [0]
-  ],
-  "22": [
-    [2, 3, 0],
-    [0, 0],
-    [1]
-  ],
-  "23": [
-    [2, 3, 0],
-    [1, 0],
-    [0]
-  ],
-  "24": [
-    [2, 0, 0],
-    [1, 3],
-    [0]
-  ],
-  "25": [
-    [2, 0, 0],
-    [1, 0],
-    [3]
-  ],
-  "26": [
-    [0, 0, 0],
-    [1, 2],
-    [3]
-  ],
-  "31": [
-    [3, 2, 1],
-    [0, 0],
-    [0]
-  ],
-  "32": [
-    [3, 2, 0],
-    [0, 0],
-    [1]
-  ],
-  "33": [
-    [3, 2, 0],
-    [1, 0],
-    [0]
-  ],
-  "34": [
-    [3, 0, 0],
-    [1, 2],
-    [0]
-  ],
-  "35": [
-    [3, 0, 0],
-    [1, 0],
-    [2]
-  ],
-  "36": [
-    [0, 0, 0],
-    [1, 3],
-    [2]
-  ],
-  "41": [
-    [3, 1, 2],
-    [0, 0],
-    [0]
-  ],
-  "42": [
-    [3, 1, 0],
-    [0, 0],
-    [2]
-  ],
-  "43": [
-    [3, 1, 0],
-    [2, 0],
-    [0]
-  ],
-  "44": [
-    [3, 0, 0],
-    [2, 1],
-    [0]
-  ],
-  "45": [
-    [3, 0, 0],
-    [2, 0],
-    [1]
-  ],
-  "46": [
-    [0, 0, 0],
-    [2, 3],
-    [1]
-  ],
-
-  "51": [
-    [1, 3, 2],
-    [0, 0],
-    [0]
-  ],
-  "52": [
-    [1, 3, 0],
-    [0, 0],
-    [2]
-  ],
-  "53": [
-    [2, 3, 0],
-    [1, 0],
-    [0]
-  ],
-  "54": [
-    [1, 0, 0],
-    [2, 3],
-    [0]
-  ],
-  "55": [
-    [1, 0, 0],
-    [2, 0],
-    [3]
-  ],
-  "56": [
-    [0, 0, 0],
-    [2, 1],
-    [3]
-  ],
-
-  "61": [
-    [1, 2, 3],
-    [0, 0],
-    [0]
-  ],
-  "62": [
-    [1, 2, 0],
-    [0, 0],
-    [3]
-  ],
-  "63": [
-    [2, 1, 0],
-    [3, 0],
-    [0]
-  ],
-  "64": [
-    [1, 0, 0],
-    [3, 2],
-    [0]
-  ],
-  "65": [
-    [1, 0, 0],
-    [3, 0],
-    [2]
-  ],
-  "66": [
-    [0, 0, 0],
-    [3, 1],
-    [2]
-  ]
-}
-
 const BUCKET_NAME = "tower-of-london-experiment-2024"
 function getProlificId(){
   const urlParams = new URL(location.href).searchParams;
@@ -508,10 +323,9 @@ var post_task_block = {
    data: {
        trial_id: "post task questions"
    },
-   questions: ['<p class = center-block-text style = "font-size: 20px">Please summarize what you were asked to do in this task.</p>',
-              '<p class = center-block-text style = "font-size: 20px">Do you have any comments about this task?</p>'],
-   rows: [15, 15],
-   columns: [60,60]
+   questions: ['<p class = center-block-text style = "font-size: 20px">Please summarize what you were asked to do in this task.</p>'],
+   rows: [15],
+   columns: [60]
 };
 
 /* define static blocks */
@@ -531,6 +345,26 @@ var end_block = {
     console.log("data_saved")
     window.location.href = getExpURL();
     history.pushState(null, '', window.location.href);
+  }
+};
+
+
+// Error block definition
+var error_block = {
+  type: 'poldrack-text',
+  data: {
+    trial_id: "error",
+    exp_id: 'tower_of_london',
+    reason: 'inactivity'
+  },
+  timing_response: 180000,
+  text: '<div class = centerbox><p class = center-block-text>The experiment has ended due to inactivity.</p><p class = center-block-text><br> Press <strong>enter</strong> to continue.</p></div>',
+  cont_key: [13],
+  timing_post_trial: 0,
+  on_finish: function() {
+    saveData();
+    console.log("data_saved_from_error_block");
+    window.location.replace('https://app.prolific.com/submissions/complete?cc=C135SBBZ')
   }
 };
 
@@ -676,16 +510,36 @@ var global_test_block = {
   choices: choices,
   timing_post_trial: 500,
   timing_response: 2000,
+  on_load: function() {
+    let timer;
+    const resetTimer = () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+      timer = setTimeout(function() {
+        console.log('90 seconds have passed');
+        saveData();
+        jsPsych.endCurrentTimeline();
+        local_global_letter_experiment = [error_block];
+        jsPsych.init({
+          timeline: local_global_letter_experiment
+        });
+      }, 90000);
+    };
+
+    document.addEventListener('keydown', resetTimer);
+    resetTimer(); // Start the timer initially
+  },
   on_finish: function(data) {
-  	correct = false
+    correct = false;
     if (data.key_press === data.correct_response) {
-      correct = true
+      correct = true;
     }
-  	jsPsych.data.addDataToLastTrial({
-  		correct: correct,
-  		trial_num: current_trial
-  	})
-  	current_trial += 1
+    jsPsych.data.addDataToLastTrial({
+      correct: correct,
+      trial_num: current_trial
+    });
+    current_trial += 1;
   }
 };
 
@@ -701,6 +555,26 @@ var local_test_block = {
   choices: choices,
   timing_post_trial: 500,
   timing_response: 2000,
+  on_load: function() {
+    let timer;
+    const resetTimer = () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+      timer = setTimeout(function() {
+        console.log('90 seconds have passed');
+        saveData();
+        jsPsych.endCurrentTimeline();
+        local_global_letter_experiment = [error_block];
+        jsPsych.init({
+          timeline: local_global_letter_experiment
+        });
+      }, 90000);
+    };
+
+    document.addEventListener('keydown', resetTimer);
+    resetTimer(); // Start the timer initially
+  },
   on_finish: function(data) {
     correct = false
     if (data.key_press === data.correct_response) {
