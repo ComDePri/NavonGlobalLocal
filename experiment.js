@@ -2,7 +2,7 @@
 /* Define new helper functions for ComDepRi */
 /* ************************************ */
 
-const BUCKET_NAME = "tower-of-london-experiment-2024"
+const BUCKET_NAME = "navon-global-local-experiment-2024"
 function getProlificId(){
   const urlParams = new URL(location.href).searchParams;
 // Get parameters by name
