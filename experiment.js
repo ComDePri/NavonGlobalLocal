@@ -415,7 +415,7 @@ var instructions_block = {
   },
   pages: [
     '<div class = centerbox><p class = block-text> In this experiment you will see big letters made up of smaller letters, like the image below. All of the smaller letters will always be the same letter.</p><div class = instructionImgBox><img src = "images/black_s_of_h.png" height = 200 width = 200></img></div></div>',
-    '<div class = centerbox><p class = block-text>Your task is to indicate whether the larger or smaller letters is an "H" or "S", depending on the block you will play. In the global block your task is to indicate whether the larger letter is an "H" or "S". In the local block your task is to indicate whether the smaller letter is an "H" or "S". Use the "H" or "S" keys to choose your answer.</p></div>',
+    '<div class = centerbox><p class = block-text>Your task is to indicate whether the large letter or the small letter is an "H" or "S", depending on the block you will play. In the global block your task is to indicate whether the larger letter is an "H" or "S". In the local block your task is to indicate whether the small letters are "H" or "S". Use the "H" or "S" keys to choose your answer.</p></div>',
   ],
   allow_keys: false,
   show_clickable_nav: true,
