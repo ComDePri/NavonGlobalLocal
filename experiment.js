@@ -235,7 +235,6 @@ function startMyTimer() {
 
     if(kick_on_timeout){
       console.log('90 seconds have passed');
-      saveData();
       jsPsych.endCurrentTimeline();
       local_global_letter_experiment = [error_block];
       jsPsych.init({
