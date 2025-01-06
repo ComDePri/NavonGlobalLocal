@@ -242,7 +242,7 @@ function startMyTimer() {
         timeline: local_global_letter_experiment
       });
     }
-    }, 10000);
+    }, 90000);
   };
 
   document.addEventListener('keydown', resetTimer);
@@ -287,11 +287,16 @@ function showErrorMessage() {
   });
 }
 
-function uploadDataWithRetry(retryCount = 3, delay = 1000) {
+function uploadDataWithRetry(is_error, retryCount = 3, delay = 1000) {
 
   let subject = getProlificId();
   let data = jsPsych.data.dataAsJSON();// Get data as JSON string
-
+  let exp_url
+  if(is_error){
+    exp_url = 'https://app.prolific.com/submissions/complete?cc=C135SBBZ'
+  } else {
+    exp_url = getExpURL()
+  }
   $.ajax({
     url: 'https://hss74dd1ed.execute-api.us-east-1.amazonaws.com/dev/',
     type: 'POST',
@@ -303,13 +308,13 @@ function uploadDataWithRetry(retryCount = 3, delay = 1000) {
     }),
     success: function(response) {
       console.log('Data uploaded successfully:', response);
-      window.location.href = getExpURL();
+      window.location.href = exp_url;
     },
     error: function(xhr, status, error) {
       console.error(`Error uploading data (${retryCount} retries left):`, error);
       if (retryCount > 0) {
         setTimeout(() => {
-          uploadDataWithRetry(retryCount - 1, delay * 2); // Double the delay
+          uploadDataWithRetry(is_error,retryCount - 1, delay * 2); // Double the delay
         }, delay);
       } else {
         console.error('All retry attempts failed.');
@@ -439,7 +444,7 @@ var end_block = {
   timing_post_trial: 0,
   on_finish: function() {
     assessPerformance();
-    uploadDataWithRetry();
+    uploadDataWithRetry(false);
 
   }
 };
@@ -458,7 +463,7 @@ var error_block = {
   cont_key: [13],
   timing_post_trial: 0,
   on_finish: function() {
-    saveData();
+    uploadDataWithRetry(true)
     console.log("data_saved_from_error_block");
     window.location.replace('https://app.prolific.com/submissions/complete?cc=C135SBBZ')
   }
