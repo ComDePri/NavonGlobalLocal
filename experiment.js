@@ -464,8 +464,6 @@ var error_block = {
   timing_post_trial: 0,
   on_finish: function() {
     uploadDataWithRetry(true)
-    console.log("data_saved_from_error_block");
-    window.location.replace('https://app.prolific.com/submissions/complete?cc=C135SBBZ')
   }
 };
 
