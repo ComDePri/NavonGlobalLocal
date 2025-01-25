@@ -505,7 +505,9 @@ var error_block = {
   cont_key: [13],
   timing_post_trial: 0,
   on_finish: function() {
-    uploadDataWithRetry(true)
+    uploadDataWithRetry()
+    console.log("data_saved_from_error_block");
+    window.location.replace('https://app.prolific.com/submissions/complete?cc=C135SBBZ')
   }
 };
 
@@ -604,7 +606,7 @@ var instructions_block = {
   pages: [
     '<div class = centerbox><p class = block-text> In this experiment you will see big letters made up of smaller letters, like the image below. All of the smaller letters will always be the same letter.</p><div class = instructionImgBox><img src = "images/black_s_of_h.png" height = 200 width = 200></img></div></div>',
     '<div class = centerbox><p class = block-text>Your task is to indicate whether the large letter or the small letter is an "H" or "S", depending on the block you will play. In the global block your task is to indicate whether the larger letter is an "H" or "S". In the local block your task is to indicate whether the small letters are "H" or "S". Use the "H" or "S" keys to choose your answer.</p></div>',
-    '<div class = centerbox><p class = block-text>If you are not active in the task, we may ask you to return your submission</p></div>',
+    '<div class = centerbox><p class = block-text>If you are not active in the task, we may ask you to return your submissionfef</p></div>',
 
 
 ],
