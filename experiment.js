@@ -497,7 +497,7 @@ var error_block = {
   type: 'poldrack-text',
   data: {
     trial_id: "error",
-    exp_id: 'tower_of_london',
+    exp_id: 'navon',
     reason: 'inactivity'
   },
   timing_response: 180000,
