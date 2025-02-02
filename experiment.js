@@ -148,6 +148,7 @@ var makeTrialList = function(trial_index, len, stim, data) {
     tmp_obj.stimulus = stim[tmpi] + generateImageDescription() +'></img></div></div>'
     tmp_data = $.extend({}, data[tmpi])
     tmp_data.correct_response = correct_response(trial_index, tmpi)
+    tmp_data.condition = trial_index
     tmp_obj.data = tmp_data
     output_list.push(tmp_obj)
   }
