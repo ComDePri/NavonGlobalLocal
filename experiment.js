@@ -390,6 +390,7 @@ var prefix = '<div class = centerbox><img src = "'
 var stim = []
 var data = []
 var images = []
+var condition = 'global'
 for (c = 0; c < task_colors.length; c++) {
   if (c === 0) {
     condition = 'global'
